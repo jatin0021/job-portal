@@ -9,9 +9,13 @@ const Home = () => {
 
   useEffect(() => {
     const fetchJobs = async () => {
-      const querySnapshot = await getDocs(collection(db, "jobs"));
-      const jobsList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setJobs(jobsList);
+      try {
+        const querySnapshot = await getDocs(collection(db, "jobs"));
+        const jobsList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setJobs(jobsList);
+      } catch (error) {
+        console.error("Error fetching jobs:", error);
+      }
       setLoading(false);
     };
 
@@ -25,7 +29,7 @@ const Home = () => {
       {loading ? (
         <p className="text-center">Loading jobs...</p>
       ) : jobs.length === 0 ? (
-        <p className="text-center">No jobs available. <Link to="/post-job" className="text-blue-500">Post one now!</Link></p>
+        <p className="text-center">No jobs available.</p>
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {jobs.map((job) => (
@@ -33,7 +37,7 @@ const Home = () => {
               <h2 className="text-xl font-semibold">{job.title}</h2>
               <p className="text-gray-700">{job.company}</p>
               <p className="text-gray-500">{job.location}</p>
-              <p className="text-green-600 font-bold">₹{job.salary}</p>
+              <p className="text-green-600 font-bold">₹{job.salaryMin} - ₹{job.salaryMax}</p>
               <Link to={`/job/${job.id}`} className="text-blue-500">View Details</Link>
             </div>
           ))}

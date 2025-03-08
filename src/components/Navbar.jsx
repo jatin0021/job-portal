@@ -1,8 +1,14 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 const Navbar = () => {
   const { user, logout } = useAuth();
+  const navigate = useNavigate(); // Get navigation function
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/login"); // Redirect to login page after logout
+  };
 
   return (
     <nav className="bg-blue-500 p-4 flex justify-between items-center">
@@ -12,12 +18,14 @@ const Navbar = () => {
         {user ? (
           <>
             <span className="text-white">Hello, {user.username}!</span>
-            {user.role === "admin" && ( // Show "Post a Job" only if user is admin
-              <Link to="/post-job" className="bg-white text-blue-500 px-3 py-2 rounded">
-                Post a Job
-              </Link>
+            {user.role === "admin" && (
+              <>
+                <Link to="/post-job" className="bg-white text-blue-500 px-3 py-2 rounded">Post a Job</Link>
+                <Link to="/admin-dashboard" className="bg-white text-blue-500 px-3 py-2 rounded">Admin Dashboard</Link>
+              </>
             )}
-            <button onClick={logout} className="bg-red-500 text-white px-3 py-2 rounded">
+            <Link to="/dashboard" className="bg-white text-blue-500 px-3 py-2 rounded">Dashboard</Link>
+            <button onClick={handleLogout} className="bg-red-500 text-white px-3 py-2 rounded">
               Logout
             </button>
           </>
